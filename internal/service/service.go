@@ -18,5 +18,3 @@ func New(ctx context.Context) Service {
 	svc.dao = dao.New(otgorm.WithContext(svc.ctx, global.DBEngine))
 	return svc
 }
-
-

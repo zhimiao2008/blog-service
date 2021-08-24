@@ -40,4 +40,3 @@ func (l MethodLimiter) AddBuckets(rules ...LimiterBucketRule) LimiterIface {
 
 	return l
 }
-

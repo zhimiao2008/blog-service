@@ -11,13 +11,13 @@ import (
 )
 
 type Article struct {
-	ID uint32 `json:"id"`
-	Title string `json:"title"`
-	Desc string `json:"desc"`
-	Content string `json:"content"`
-	CoverImageUrl string `json:"cover_image_url"`
-	State uint8 `json:"state"`
-	Tag *model.Tag `json:"tag"`
+	ID            uint32     `json:"id"`
+	Title         string     `json:"title"`
+	Desc          string     `json:"desc"`
+	Content       string     `json:"content"`
+	CoverImageUrl string     `json:"cover_image_url"`
+	State         uint8      `json:"state"`
+	Tag           *model.Tag `json:"tag"`
 }
 
 func NewArticle() Article {

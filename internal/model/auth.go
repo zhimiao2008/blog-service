@@ -4,7 +4,7 @@ import "github.com/jinzhu/gorm"
 
 type Auth struct {
 	*Model
-	AppKey string `json:"app_key"`
+	AppKey    string `json:"app_key"`
 	AppSecret string `json:"app_secret"`
 }
 

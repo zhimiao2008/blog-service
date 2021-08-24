@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"flag"
 	"fmt"
 	"github.com/gin-gonic/gin"
@@ -13,7 +14,10 @@ import (
 	"github.com/natefinch/lumberjack"
 	"log"
 	"net/http"
+	"os"
+	"os/signal"
 	"strings"
+	"syscall"
 	"time"
 )
 
@@ -29,13 +33,6 @@ var (
 )
 
 func init() {
-	if isVersion {
-		fmt.Printf("build time: %s\n", buildTime)
-		fmt.Printf("build version: %s\n", buildVersion)
-		fmt.Printf("build git_commit_id: %s\n", gitCommitID)
-		return
-	}
-
 	err := setupFlag()
 	if err != nil {
 		log.Fatalf("init.setupFlag err: %v", err)
@@ -62,8 +59,12 @@ func init() {
 // @description Go 编程之旅： 一起用go做项目
 // @termsOfService https://github.com/go-programming-tour-book
 func main() {
-	// log test
-	//global.Logger.Infof("%s: go-programming-tour-book/%s", "eddycjy", "blog-service")
+	if isVersion {
+		fmt.Printf("build time: %s\n", buildTime)
+		fmt.Printf("build version: %s\n", buildVersion)
+		fmt.Printf("build git_commit_id: %s\n", gitCommitID)
+		return
+	}
 
 	gin.SetMode(global.ServerSetting.RunMode)
 	router := routers.NewRouter()
@@ -74,7 +75,27 @@ func main() {
 		WriteTimeout:   global.ServerSetting.WriteTimeout,
 		MaxHeaderBytes: 1 << 20,
 	}
-	s.ListenAndServe()
+
+	go func() {
+		if err := s.ListenAndServe(); err != nil && err != http.ErrServerClosed {
+			log.Fatalf("s.ListenAndServe err: %v", err)
+		}
+	}()
+
+	// 等待中断信号
+	quit := make(chan os.Signal)
+	// 接受 SIGINT 和 SIGTERM 信号
+	signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
+	<-quit
+	log.Println("shutdown server... ")
+
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+	if err := s.Shutdown(ctx); err != nil {
+		log.Fatalf("Server forced to shutdown: %v", err)
+	}
+
+	log.Println("server exiting")
 }
 
 func setupFlag() error {
