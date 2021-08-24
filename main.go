@@ -2,6 +2,7 @@ package main
 
 import (
 	"flag"
+	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/go-grogramming-tour-book/blog-service/global"
 	"github.com/go-grogramming-tour-book/blog-service/internal/model"
@@ -21,9 +22,20 @@ var (
 	runMode   string
 	config    string
 	isVersion bool
+
+	buildTime    string
+	buildVersion string
+	gitCommitID  string
 )
 
 func init() {
+	if isVersion {
+		fmt.Printf("build time: %s\n", buildTime)
+		fmt.Printf("build version: %s\n", buildVersion)
+		fmt.Printf("build git_commit_id: %s\n", gitCommitID)
+		return
+	}
+
 	err := setupFlag()
 	if err != nil {
 		log.Fatalf("init.setupFlag err: %v", err)
