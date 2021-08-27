@@ -10,7 +10,7 @@ all: pack ## all
 
 test: ## 检查&测试
 
-build:  ## 初始化
+build: ## 初始化
 	mkdir -p $(TMPDIR)/bin
 	go build -o $(TMPDIR)/bin/blog -ldflags "-X main.buildTime=`date +%Y-%m-%d,%H:%M:%S` -X main.buildVersion=1.0.0 -X main.gitCommitID=`git rev-parse HEAD` "
 	cp -r configs $(TMPDIR)/
@@ -24,3 +24,7 @@ clean: ## 清除目录
 	go clean
 
 .DEFAULT: all
+
+
+help: ## Show this help.
+	@fgrep -h "##" $(MAKEFILE_LIST) | fgrep -v fgrep | sed -e 's/\\$$//' | sed -e 's/##//'

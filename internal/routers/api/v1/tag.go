@@ -38,11 +38,14 @@ func (t Tag) Get(c *gin.Context) {
 // @Failure 500 {object} errcode.Error "内部错误"
 // @Router /api/v1/tags [get]
 func (t Tag) List(c *gin.Context) {
+
+	//time.Sleep(time.Hour)
+
 	param := service.TagListRequest{}
 
 	response := app.NewResponse(c)
 	valid, errs := app.BindAndValid(c, &param)
-	if valid == true {
+	if !valid {
 		global.Logger.Errorf(c, "app.BindAndValid errs: %v", errs)
 		response.ToErrorResponse(errcode.InvalidParams.WithDetails(errs.Errors()...))
 		return
