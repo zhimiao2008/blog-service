@@ -8,6 +8,7 @@ import (
 	"github.com/go-grogramming-tour-book/blog-service/internal/routers/api"
 	"github.com/go-grogramming-tour-book/blog-service/internal/routers/api/v1"
 	"github.com/go-grogramming-tour-book/blog-service/pkg/limiter"
+	"github.com/prometheus/client_golang/prometheus/promhttp"
 	ginSwagger "github.com/swaggo/gin-swagger"
 	"github.com/swaggo/gin-swagger/swaggerFiles"
 	"net/http"
@@ -34,6 +35,7 @@ func NewRouter() *gin.Engine {
 		r.Use(middleware.Recovery())
 	}
 
+	r.Use(middleware.MetricsMonitor())
 	r.Use(middleware.Translations())
 	r.Use(middleware.AppInfo())
 	r.Use(middleware.Tracing())
@@ -44,6 +46,9 @@ func NewRouter() *gin.Engine {
 	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 	r.GET("/panic", api.GeneratePanic)
 	r.GET("/timeout", api.GenerateTimeout)
+
+	r.GET("/metrics", gin.WrapH(promhttp.Handler()))
+	// expose prometheus metrics接口
 
 	upload := api.NewUpload()
 	r.POST("/upload/file", upload.UploadFile)
