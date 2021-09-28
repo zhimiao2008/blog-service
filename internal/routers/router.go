@@ -19,8 +19,8 @@ var methodLimiters = limiter.NewMethodLimiter().AddBuckets(
 	limiter.LimiterBucketRule{
 		Key:          "/auth",
 		FillInterval: time.Second,
-		Capacity:     1,
-		Quantum:      1,
+		Capacity:     100,
+		Quantum:      100,
 	},
 )
 
